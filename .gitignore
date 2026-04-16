@@ -1,0 +1,48 @@
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+.m2/
+apache-maven-*/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+bin/
+
+# Dependency folders
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environments and Logs
+.env
+*.log
+.gemini/
+brain/
+artifacts/
+scratch/
+system_generated/
+walkthrough.md
+implementation_plan.md
+task.md
+
+# Application specific
+backup/
+temp/
