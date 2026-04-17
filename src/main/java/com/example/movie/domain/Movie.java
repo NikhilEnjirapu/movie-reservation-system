@@ -23,5 +23,6 @@ public class Movie {
 
     private String genre;
 
+    @Column(columnDefinition = "TEXT")
     private String posterUrl;
 }
