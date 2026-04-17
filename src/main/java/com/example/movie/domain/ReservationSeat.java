@@ -8,7 +8,8 @@ import java.util.UUID;
 @Table(name = "reservation_seats", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"reservation_id", "seat_id"})
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,6 +20,8 @@ public class ReservationSeat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Reservation reservation;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -23,7 +23,7 @@ public class SeatExpirationService {
         LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5);
         
         // Find seats that are RESERVED and haven't been updated in 5 minutes
-        List<Seat> expiredSeats = seatRepository.findExpiredReservedSeats(expiryTime);
+        List<Seat> expiredSeats = seatRepository.findExpiredReservedSeats(SeatStatus.RESERVED, expiryTime);
         
         if (!expiredSeats.isEmpty()) {
             expiredSeats.forEach(seat -> seat.setStatus(SeatStatus.AVAILABLE));

@@ -7,6 +7,7 @@ import com.example.movie.exception.SeatNotAvailableException;
 import com.example.movie.repository.ReservationRepository;
 import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
+import com.example.movie.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ public class ReservationServiceTest {
     private SeatRepository seatRepository;
     @Mock
     private ShowtimeRepository showtimeRepository;
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private ReservationService reservationService;
@@ -66,7 +69,8 @@ public class ReservationServiceTest {
         request.setSeatIds(List.of(mockSeat.getId()));
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
-        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds())).thenReturn(List.of(mockSeat));
+        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of(mockSeat));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).name("Test").email("test@test.com").password("pw").role(Role.USER).build()));
 
         Reservation mockSavedReservation = Reservation.builder()
                 .id(UUID.randomUUID())
@@ -98,7 +102,7 @@ public class ReservationServiceTest {
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
         // Return empty list to simulate seat not being AVAILABLE or missing
-        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds())).thenReturn(List.of());
+        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of());
 
         // Act & Assert
         assertThrows(SeatNotAvailableException.class, () -> reservationService.reserveSeats(userId, request));

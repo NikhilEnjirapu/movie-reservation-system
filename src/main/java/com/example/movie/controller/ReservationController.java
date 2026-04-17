@@ -27,6 +27,9 @@ public class ReservationController {
             @Valid @RequestBody ReservationRequestDTO request, 
             Principal principal) {
         
+        System.out.println("ReservationController: Creating reservation for principal: " + principal.getName());
+        System.out.println("ReservationController: Request showtimeId=" + request.getShowtimeId() + ", seatIds=" + request.getSeatIds());
+        
         // principal.getName() now returns the User ID string from JWT
         UUID userId = UUID.fromString(principal.getName());
             
