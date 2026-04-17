@@ -8,6 +8,7 @@ import com.example.movie.exception.SeatNotAvailableException;
 import com.example.movie.repository.ReservationRepository;
 import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
+import com.example.movie.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final ShowtimeRepository showtimeRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ReservationResponseDTO reserveSeats(UUID userId, ReservationRequestDTO request) {
@@ -44,7 +46,8 @@ public class ReservationService {
         seatRepository.saveAll(availableSeats);
 
         // 3. Create Reservation
-        User user = User.builder().id(userId).build();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         Reservation reservation = Reservation.builder()
                 .user(user)
