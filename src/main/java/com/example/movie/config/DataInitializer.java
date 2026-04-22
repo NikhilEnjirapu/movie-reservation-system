@@ -96,14 +96,16 @@ public class DataInitializer implements CommandLineRunner {
 
     private void seedSeats(Showtime st) {
         int seatsPerRow = 8;
+        java.util.List<Seat> seatsToSave = new java.util.ArrayList<>();
         for (int i = 0; i < st.getTotalSeats(); i++) {
             char row = (char) ('A' + (i / seatsPerRow));
             int num = (i % seatsPerRow) + 1;
-            seatRepository.save(Seat.builder()
+            seatsToSave.add(Seat.builder()
                     .showtime(st)
                     .seatNumber(String.valueOf(row) + num)
                     .status(SeatStatus.AVAILABLE)
                     .build());
         }
+        seatRepository.saveAll(seatsToSave);
     }
 }
