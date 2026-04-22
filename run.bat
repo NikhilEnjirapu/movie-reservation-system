@@ -46,7 +46,7 @@ set CLASSPATH=%CLASSPATH%;C:\Users\nikhi\.m2\repository\org\springframework\spri
 set CLASSPATH=%CLASSPATH%;C:\Users\nikhi\.m2\repository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar
 set CLASSPATH=%CLASSPATH%;C:\Users\nikhi\.m2\repository\org\postgresql\postgresql\42.6.0\postgresql-42.6.0.jar
 
-echo Starting Movie Reservation System...
+echo Starting CineReserve...
 java -cp "%CLASSPATH%" com.example.movie.MovieReservationApplication
 
 pause

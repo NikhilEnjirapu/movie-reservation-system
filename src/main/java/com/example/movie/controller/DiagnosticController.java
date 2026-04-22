@@ -23,7 +23,7 @@ public class DiagnosticController {
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> result = new LinkedHashMap<>();
-        
+
         try {
             long showtimeCount = showtimeRepository.count();
             result.put("showtimes", showtimeCount);
@@ -50,28 +50,29 @@ public class DiagnosticController {
             if (!showtimes.isEmpty()) {
                 var firstShowtime = showtimes.get(0);
                 result.put("first_showtime_id", firstShowtime.getId());
-                
+
                 var seats = seatRepository.findByShowtimeId(firstShowtime.getId());
                 result.put("seats_for_first_showtime", seats.size());
-                
+
                 if (!seats.isEmpty()) {
                     var firstSeat = seats.get(0);
                     result.put("first_seat_id", firstSeat.getId());
                     result.put("first_seat_status", firstSeat.getStatus());
-                    
+
                     // Test the problematic query
                     try {
                         var availableSeats = seatRepository.findAvailableSeatsForUpdate(
-                            List.of(firstSeat.getId()), SeatStatus.AVAILABLE);
+                                List.of(firstSeat.getId()), SeatStatus.AVAILABLE);
                         result.put("available_seat_query_result", availableSeats.size());
                     } catch (Exception e) {
                         result.put("available_seat_query_error", e.getClass().getName() + ": " + e.getMessage());
                         if (e.getCause() != null) {
-                            result.put("available_seat_query_cause", e.getCause().getClass().getName() + ": " + e.getCause().getMessage());
+                            result.put("available_seat_query_cause",
+                                    e.getCause().getClass().getName() + ": " + e.getCause().getMessage());
                         }
                     }
                 }
-                
+
                 // Test lazy loading of movie
                 try {
                     String movieTitle = firstShowtime.getMovie().getTitle();

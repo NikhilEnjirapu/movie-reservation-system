@@ -1,7 +1,7 @@
-# Movie Reservation System
+# CineReserve
 
 ## 1. Project Title & Description
-**Movie Reservation System** is a full-stack, scalable web application designed to streamline the movie ticket booking process. It provides a premium, interactive user experience where customers can browse currently showing movies, select showtimes, pick individual seats, and generate a QR code for their ticket after a simulated payment process.
+**CineReserve** is a full-stack, scalable web application designed to streamline the movie ticket booking process. It provides a premium, interactive user experience where customers can browse currently showing movies, select showtimes, pick individual seats, and generate a QR code for their ticket after a simulated payment process.
 
 The platform addresses the need for a simple, fast, and secure reservation flow. By utilizing role-based access control (RBAC), it provides distinct experiences for end-users (booking and viewing tickets) and administrators (managing movies, showtimes, and users).
 
