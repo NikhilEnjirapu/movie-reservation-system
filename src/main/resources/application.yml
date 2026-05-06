@@ -3,7 +3,7 @@ spring:
     name: movie-reservation-system
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb+srv://enjirapunikhil_db_user:Nikhil123@cluster0.5ndbdhn.mongodb.net/movie_db?retryWrites=true&w=majority&appName=Cluster0&uuidRepresentation=standard}
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb+srv://enjirapunikhil_db_user:b765rYZXrqgWCs1q@cinereserve.u8dc6h0.mongodb.net/movie_db?retryWrites=true&w=majority&appName=Cluster0&uuidRepresentation=standard}
       auto-index-creation: true
 
 jwt:
