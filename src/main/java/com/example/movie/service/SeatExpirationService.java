@@ -6,7 +6,6 @@ import com.example.movie.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,16 +17,13 @@ public class SeatExpirationService {
     private final SeatRepository seatRepository;
 
     @Scheduled(fixedRate = 60000) // Runs every minute
-    @Transactional
     public void releaseExpiredSeats() {
         LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5);
-        
-        // Find seats that are RESERVED and haven't been updated in 5 minutes
-        List<Seat> expiredSeats = seatRepository.findExpiredReservedSeats(SeatStatus.RESERVED, expiryTime);
-        
+
+        List<Seat> expiredSeats = seatRepository.findByStatusAndUpdatedAtBefore(SeatStatus.RESERVED, expiryTime);
+
         if (!expiredSeats.isEmpty()) {
-            expiredSeats.forEach(seat -> seat.setStatus(SeatStatus.AVAILABLE));
-            seatRepository.saveAll(expiredSeats);
+            seatRepository.updateStatusByIds(expiredSeats.stream().map(Seat::getId).toList(), SeatStatus.AVAILABLE);
             System.out.println("Released " + expiredSeats.size() + " expired reserved seats.");
         }
     }

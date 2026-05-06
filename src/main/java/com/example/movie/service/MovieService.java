@@ -9,9 +9,9 @@ import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,9 +24,9 @@ public class MovieService {
     private final SeatRepository seatRepository;
     private final ReservationRepository reservationRepository;
 
-    @Transactional
     public MovieDTO create(MovieDTO dto) {
         Movie movie = Movie.builder()
+                .id(UUID.randomUUID())
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .genre(dto.getGenre())
@@ -36,28 +36,38 @@ public class MovieService {
         return mapToDTO(saved);
     }
 
-    @Transactional(readOnly = true)
     public List<MovieDTO> findAll() {
         return movieRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public MovieDTO findById(UUID id) {
         return movieRepository.findById(id)
                 .map(this::mapToDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
     }
 
-    @Transactional(readOnly = true)
     public List<MovieDTO> search(String genre, String searchKeyword) {
-        return movieRepository.searchMovies(genre, searchKeyword).stream()
+        List<Movie> movies;
+        if (genre != null && !genre.isBlank() && searchKeyword != null && !searchKeyword.isBlank()) {
+            movies = movieRepository.findByGenreIgnoreCaseAndTitleContainingIgnoreCase(genre, searchKeyword);
+        } else if (genre != null && !genre.isBlank()) {
+            movies = movieRepository.findByGenreIgnoreCase(genre);
+        } else if (searchKeyword != null && !searchKeyword.isBlank()) {
+            movies = movieRepository.findByTitleContainingIgnoreCase(searchKeyword);
+        } else {
+            movies = movieRepository.findAll();
+        }
+
+        return movies.stream()
+                .filter(movie -> genre == null || genre.isBlank() || genre.equalsIgnoreCase(movie.getGenre()))
+                .filter(movie -> searchKeyword == null || searchKeyword.isBlank()
+                        || movie.getTitle().toLowerCase(Locale.ROOT).contains(searchKeyword.toLowerCase(Locale.ROOT)))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public MovieDTO update(UUID id, MovieDTO dto) {
         Movie existing = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
@@ -71,7 +81,6 @@ public class MovieService {
         return mapToDTO(updated);
     }
 
-    @Transactional
     public void delete(UUID id) {
         if (!movieRepository.existsById(id)) {
             throw new ResourceNotFoundException("Movie not found with id: " + id);
@@ -84,7 +93,6 @@ public class MovieService {
         movieRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     public List<MovieDTO> getRecommendations(UUID userId) {
         // Mock recommendation logic
         List<Movie> allMovies = movieRepository.findAll();

@@ -1,8 +1,12 @@
 package com.example.movie.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "reservations")
+@Document(collection = "reservations")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,31 +22,12 @@ import java.util.UUID;
 @Builder
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "showtime_id", nullable = false)
-    private Showtime showtime;
-
-    @Column(nullable = false)
+    private UUID userId;
+    private UUID showtimeId;
     private BigDecimal totalPrice;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ReservationStatus status;
-
-    @CreationTimestamp
-    @Column(updatable = false)
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private List<ReservationSeat> reservationSeats = new ArrayList<>();
 }

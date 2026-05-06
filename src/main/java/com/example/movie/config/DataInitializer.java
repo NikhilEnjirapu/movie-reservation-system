@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -39,6 +38,7 @@ public class DataInitializer implements CommandLineRunner {
     private void seedOneAdmin(String email, String name, String password) {
         if (userRepository.findByEmail(email).isEmpty()) {
             User admin = User.builder()
+                    .id(java.util.UUID.randomUUID())
                     .name(name)
                     .email(email)
                     .password(passwordEncoder.encode(password))
@@ -51,6 +51,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void seedMoviesAndShowtimes() {
         Movie m1 = Movie.builder()
+                .id(java.util.UUID.randomUUID())
                 .title("Void Explorer")
                 .description("A perilous journey to a distant black hole reveals profound secrets about the fabric of time.")
                 .genre("Sci-Fi")
@@ -58,6 +59,7 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
         
         Movie m2 = Movie.builder()
+                .id(java.util.UUID.randomUUID())
                 .title("Neon Agent")
                 .description("An elite operative unravels a global conspiracy amidst the rain-soaked neon streets of the hyper-city.")
                 .genre("Action")
@@ -70,7 +72,8 @@ public class DataInitializer implements CommandLineRunner {
         // Seed some showtimes for today
         LocalDateTime now = LocalDateTime.now();
         Showtime st1 = Showtime.builder()
-                .movie(m1)
+                .id(java.util.UUID.randomUUID())
+                .movieId(m1.getId())
                 .screenId(1)
                 .startTime(now.plusHours(2))
                 .endTime(now.plusHours(4).plusMinutes(30))
@@ -78,7 +81,8 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
         
         Showtime st2 = Showtime.builder()
-                .movie(m2)
+                .id(java.util.UUID.randomUUID())
+                .movieId(m2.getId())
                 .screenId(2)
                 .startTime(now.plusHours(3))
                 .endTime(now.plusHours(5))
@@ -101,9 +105,11 @@ public class DataInitializer implements CommandLineRunner {
             char row = (char) ('A' + (i / seatsPerRow));
             int num = (i % seatsPerRow) + 1;
             seatsToSave.add(Seat.builder()
-                    .showtime(st)
+                    .id(java.util.UUID.randomUUID())
+                    .showtimeId(st.getId())
                     .seatNumber(String.valueOf(row) + num)
                     .status(SeatStatus.AVAILABLE)
+                    .updatedAt(LocalDateTime.now())
                     .build());
         }
         seatRepository.saveAll(seatsToSave);

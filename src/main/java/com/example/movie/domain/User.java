@@ -1,30 +1,26 @@
 package com.example.movie.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.UUID;
 
-@Entity
-@Table(name = "app_users")
+@Document(collection = "app_users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
     @Id
-    @GeneratedValue
     private UUID id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(unique = true, nullable = false)
+    @Indexed(unique = true)
     private String email;
-
-    @Column(nullable = false)
     private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 }

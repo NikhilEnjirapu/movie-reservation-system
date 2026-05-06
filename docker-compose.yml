@@ -1,30 +1,11 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: movie_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: movie_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - movie_network
-
   backend:
     build: .
     container_name: movie_backend
-    depends_on:
-      - postgres
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/movie_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://enjirapunikhil_db_user:Nikhil123@cluster0.5ndbdhn.mongodb.net/movie_db?retryWrites=true&w=majority&appName=Cluster0&uuidRepresentation=standard
     ports:
       - "8080:8080"
     networks:
@@ -39,9 +20,6 @@ services:
       - "80:80"
     networks:
       - movie_network
-
-volumes:
-  pgdata:
 
 networks:
   movie_network:

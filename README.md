@@ -34,8 +34,8 @@ These credentials grant Admin access, so you can explore both the normal ticket 
 **Backend:**
 - **Java 17 & Spring Boot 3**: Robust REST API framework.
 - **Spring Security & JWT**: Authentication and Role-Based Access Control.
-- **Spring Data JPA & Hibernate**: Database abstraction and ORM.
-- **PostgreSQL / H2 Database**: Relational database for production and local development.
+- **Spring Data MongoDB**: Document persistence for movies, showtimes, seats, and reservations.
+- **MongoDB Atlas**: Managed cloud database for local and deployed environments.
 
 ## 5. How to Use
 1. **Login/Register:** Open the app and log in using the demo credentials above (or create a new user account).
@@ -59,7 +59,7 @@ Follow these steps to run the project locally on your machine.
    ```bash
    mvn spring-boot:run
    ```
-3. The backend will start on `http://localhost:8080`. It uses an H2 in-memory database by default, so no external database setup is required for local development.
+3. The backend will start on `http://localhost:8080`. It connects to MongoDB Atlas using `SPRING_DATA_MONGODB_URI`, with the current default configured in [application.yml](/D:/movie-reservation-system/src/main/resources/application.yml:1).
 
 ### Frontend Setup
 1. Open a new terminal and navigate to the `frontend` folder:
@@ -88,9 +88,9 @@ movie-reservation-system/
 ├── src/main/java/.../movie/ # Spring Boot application
 │   ├── config/              # Security and DB Initializers
 │   ├── controller/          # REST API endpoints
-│   ├── domain/              # JPA Entities (User, Movie, Seat, etc.)
+│   ├── domain/              # MongoDB documents (User, Movie, Seat, etc.)
 │   ├── dto/                 # Data Transfer Objects
-│   ├── repository/          # Spring Data JPA Repositories
+│   ├── repository/          # Spring Data MongoDB repositories
 │   └── service/             # Business logic layer
 └── pom.xml                  # Maven dependencies
 ```
@@ -98,7 +98,7 @@ movie-reservation-system/
 ## 8. Future Enhancements
 - **Email Notifications**: Send booking confirmations and tickets directly to the user's email.
 - **Real Payment Gateway Integration**: Integrate Stripe or PayPal for actual transaction processing.
-- **Seat Lock Mechanism**: Temporarily lock seats while a user is in the checkout process to prevent double booking.
+- **Reservation Expiration Policies**: Add richer cleanup and recovery rules for abandoned seat holds.
 - **Movie Reviews & Ratings**: Allow users to leave feedback and rate movies they have watched.
 
 ## 9. Author Information

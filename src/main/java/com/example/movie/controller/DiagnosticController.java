@@ -4,7 +4,6 @@ import com.example.movie.domain.SeatStatus;
 import com.example.movie.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -20,7 +19,6 @@ public class DiagnosticController {
     private final ReservationRepository reservationRepository;
 
     @GetMapping("/health")
-    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> result = new LinkedHashMap<>();
 
@@ -58,27 +56,10 @@ public class DiagnosticController {
                     var firstSeat = seats.get(0);
                     result.put("first_seat_id", firstSeat.getId());
                     result.put("first_seat_status", firstSeat.getStatus());
-
-                    // Test the problematic query
-                    try {
-                        var availableSeats = seatRepository.findAvailableSeatsForUpdate(
-                                firstShowtime.getId(), List.of(firstSeat.getId()), SeatStatus.AVAILABLE);
-                        result.put("available_seat_query_result", availableSeats.size());
-                    } catch (Exception e) {
-                        result.put("available_seat_query_error", e.getClass().getName() + ": " + e.getMessage());
-                        if (e.getCause() != null) {
-                            result.put("available_seat_query_cause",
-                                    e.getCause().getClass().getName() + ": " + e.getCause().getMessage());
-                        }
-                    }
-                }
-
-                // Test lazy loading of movie
-                try {
-                    String movieTitle = firstShowtime.getMovie().getTitle();
-                    result.put("movie_title_lazy_load", movieTitle);
-                } catch (Exception e) {
-                    result.put("movie_lazy_load_error", e.getClass().getName() + ": " + e.getMessage());
+                    long availableSeats = seats.stream()
+                            .filter(seat -> seat.getStatus() == SeatStatus.AVAILABLE)
+                            .count();
+                    result.put("available_seat_count", availableSeats);
                 }
             }
         } catch (Exception e) {

@@ -4,6 +4,7 @@ import com.example.movie.domain.*;
 import com.example.movie.dto.ReservationRequestDTO;
 import com.example.movie.dto.ReservationResponseDTO;
 import com.example.movie.exception.SeatNotAvailableException;
+import com.example.movie.repository.MovieRepository;
 import com.example.movie.repository.ReservationRepository;
 import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
@@ -34,6 +35,8 @@ public class ReservationServiceTest {
     private ShowtimeRepository showtimeRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private MovieRepository movieRepository;
 
     @InjectMocks
     private ReservationService reservationService;
@@ -50,7 +53,7 @@ public class ReservationServiceTest {
 
         showtime = Showtime.builder()
                 .id(showtimeId)
-                .movie(Movie.builder().title("Test Movie").build())
+                .movieId(UUID.randomUUID())
                 .startTime(java.time.LocalDateTime.now())
                 .build();
 
@@ -69,18 +72,20 @@ public class ReservationServiceTest {
         request.setSeatIds(List.of(mockSeat.getId()));
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
-        when(seatRepository.findAvailableSeatsForUpdate(showtimeId, request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of(mockSeat));
+        when(seatRepository.reserveAvailableSeats(showtimeId, request.getSeatIds())).thenReturn(List.of(mockSeat));
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).name("Test").email("test@test.com").password("pw").role(Role.USER).build()));
+        when(movieRepository.findById(showtime.getMovieId())).thenReturn(Optional.of(Movie.builder().id(showtime.getMovieId()).title("Test Movie").build()));
 
         Reservation mockSavedReservation = Reservation.builder()
                 .id(UUID.randomUUID())
-                .user(User.builder().id(userId).build())
-                .showtime(showtime)
+                .userId(userId)
+                .showtimeId(showtimeId)
                 .status(ReservationStatus.PENDING_PAYMENT)
-                .reservationSeats(List.of(ReservationSeat.builder().seat(mockSeat).build()))
+                .reservationSeats(List.of(ReservationSeat.builder().seatId(mockSeat.getId()).build()))
                 .build();
 
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockSavedReservation);
+        when(seatRepository.findAllById(List.of(mockSeat.getId()))).thenReturn(List.of(mockSeat));
 
         // Act
         ReservationResponseDTO response = reservationService.reserveSeats(userId, request);
@@ -89,7 +94,7 @@ public class ReservationServiceTest {
         assertNotNull(response);
         assertEquals(ReservationStatus.PENDING_PAYMENT, response.getStatus());
         assertEquals("Test Movie", response.getMovieTitle());
-        verify(seatRepository, times(1)).saveAll(anyList());
+        verify(seatRepository, times(1)).reserveAvailableSeats(showtimeId, request.getSeatIds());
         verify(reservationRepository, times(1)).save(any(Reservation.class));
     }
 
@@ -101,13 +106,12 @@ public class ReservationServiceTest {
         request.setSeatIds(List.of(mockSeat.getId()));
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
-        // Return empty list to simulate seat not being AVAILABLE or missing
-        when(seatRepository.findAvailableSeatsForUpdate(showtimeId, request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of());
+        when(seatRepository.reserveAvailableSeats(showtimeId, request.getSeatIds())).thenReturn(List.of());
 
         // Act & Assert
         assertThrows(SeatNotAvailableException.class, () -> reservationService.reserveSeats(userId, request));
-        
-        verify(seatRepository, never()).saveAll(anyList());
+
+        verify(seatRepository, never()).updateStatusByIds(anyList(), any());
         verify(reservationRepository, never()).save(any());
     }
 }

@@ -5,16 +5,20 @@ import com.example.movie.dto.ReservationRequestDTO;
 import com.example.movie.dto.ReservationResponseDTO;
 import com.example.movie.exception.ResourceNotFoundException;
 import com.example.movie.exception.SeatNotAvailableException;
+import com.example.movie.repository.MovieRepository;
 import com.example.movie.repository.ReservationRepository;
 import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
 import com.example.movie.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,74 +30,67 @@ public class ReservationService {
     private final SeatRepository seatRepository;
     private final ShowtimeRepository showtimeRepository;
     private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
-    @Transactional
     public ReservationResponseDTO reserveSeats(UUID userId, ReservationRequestDTO request) {
         Showtime showtime = showtimeRepository.findById(request.getShowtimeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
 
-        // 1. Concurrency Handling: Pessimistic Lock on requested available seats
-        List<Seat> availableSeats = seatRepository.findAvailableSeatsForUpdate(
-                request.getShowtimeId(),
-                request.getSeatIds(),
-                SeatStatus.AVAILABLE);
+        List<Seat> availableSeats = seatRepository.reserveAvailableSeats(request.getShowtimeId(), request.getSeatIds());
 
         if (availableSeats.size() != request.getSeatIds().size()) {
             throw new SeatNotAvailableException("One or more requested seats are already booked.");
         }
 
-        // 2. Mark logic as RESERVED (pre-payment hold)
-        for (Seat seat : availableSeats) {
-            seat.setStatus(SeatStatus.RESERVED);
-        }
-        seatRepository.saveAll(availableSeats);
-
-        // 3. Create Reservation
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
+
         Reservation reservation = Reservation.builder()
-                .user(user)
-                .showtime(showtime)
+                .id(UUID.randomUUID())
+                .userId(userId)
+                .showtimeId(showtime.getId())
                 .status(ReservationStatus.PENDING_PAYMENT)
+                .createdAt(LocalDateTime.now())
                 .build();
-        
-        // Mock price calculation
+
         BigDecimal simulatedPricePerSeat = BigDecimal.valueOf(15.00);
         BigDecimal totalPrice = simulatedPricePerSeat.multiply(BigDecimal.valueOf(availableSeats.size()));
         reservation.setTotalPrice(totalPrice);
 
-        // Create mapping
         List<ReservationSeat> resSeats = availableSeats.stream()
-            .map(seat -> ReservationSeat.builder().reservation(reservation).seat(seat).build())
+            .map(seat -> ReservationSeat.builder()
+                    .id(UUID.randomUUID())
+                    .seatId(seat.getId())
+                    .build())
             .collect(Collectors.toList());
         reservation.setReservationSeats(resSeats);
 
-        Reservation savedReservation = reservationRepository.save(reservation);
-
-        return mapToDTO(savedReservation);
+        try {
+            Reservation savedReservation = reservationRepository.save(reservation);
+            return mapToDTO(savedReservation);
+        } catch (RuntimeException ex) {
+            seatRepository.updateStatusByIds(availableSeats.stream().map(Seat::getId).toList(), SeatStatus.AVAILABLE);
+            throw ex;
+        }
     }
-    
-    @Transactional(readOnly = true)
+
     public List<ReservationResponseDTO> getUserReservations(UUID userId) {
         return reservationRepository.findByUserId(userId).stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
         return reservationRepository.findAll().stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());
     }
 
-    @Transactional
     public void cancelReservation(UUID reservationId, UUID userId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
-        if (!reservation.getUser().getId().equals(userId)) {
+        if (!reservation.getUserId().equals(userId)) {
             throw new IllegalArgumentException("Unauthorized to cancel this reservation");
         }
 
@@ -102,28 +99,40 @@ public class ReservationService {
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
-
-        // Free up the seats
-        reservation.getReservationSeats().forEach(rs -> {
-            Seat seat = rs.getSeat();
-            seat.setStatus(SeatStatus.AVAILABLE);
-            seatRepository.save(seat);
-        });
-
+        seatRepository.updateStatusByIds(
+                reservation.getReservationSeats().stream().map(ReservationSeat::getSeatId).toList(),
+                SeatStatus.AVAILABLE);
         reservationRepository.save(reservation);
     }
 
     private ReservationResponseDTO mapToDTO(Reservation res) {
+        Showtime showtime = showtimeRepository.findById(res.getShowtimeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
+        Movie movie = movieRepository.findById(showtime.getMovieId())
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+
+        List<UUID> seatIds = res.getReservationSeats().stream()
+                .map(ReservationSeat::getSeatId)
+                .toList();
+        List<Seat> seats = new ArrayList<>();
+        seatRepository.findAllById(seatIds).forEach(seats::add);
+        Map<UUID, Seat> seatById = new HashMap<>();
+        for (Seat seat : seats) {
+            seatById.put(seat.getId(), seat);
+        }
+
         return ReservationResponseDTO.builder()
                 .id(res.getId())
-                .userId(res.getUser().getId())
-                .showtimeId(res.getShowtime().getId())
-                .movieTitle(res.getShowtime().getMovie().getTitle())
-                .startTime(res.getShowtime().getStartTime())
+                .userId(res.getUserId())
+                .showtimeId(res.getShowtimeId())
+                .movieTitle(movie.getTitle())
+                .startTime(showtime.getStartTime())
                 .totalPrice(res.getTotalPrice())
                 .status(res.getStatus())
                 .seatNumbers(res.getReservationSeats().stream()
-                     .map(rs -> rs.getSeat().getSeatNumber())
+                     .map(rs -> seatById.get(rs.getSeatId()))
+                     .filter(java.util.Objects::nonNull)
+                     .map(Seat::getSeatNumber)
                      .collect(Collectors.toList()))
                 .createdAt(res.getCreatedAt())
                 .build();

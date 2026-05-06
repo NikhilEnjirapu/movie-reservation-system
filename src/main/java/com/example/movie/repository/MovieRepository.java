@@ -1,19 +1,15 @@
 package com.example.movie.repository;
 
 import com.example.movie.domain.Movie;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, UUID> {
-    
-    @Query("SELECT m FROM Movie m WHERE " +
-           "(:genre IS NULL OR m.genre = :genre) AND " +
-           "(:search IS NULL OR LOWER(m.title) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<Movie> searchMovies(@Param("genre") String genre, @Param("search") String search);
+public interface MovieRepository extends MongoRepository<Movie, UUID> {
+    List<Movie> findByGenreIgnoreCase(String genre);
+    List<Movie> findByTitleContainingIgnoreCase(String title);
+    List<Movie> findByGenreIgnoreCaseAndTitleContainingIgnoreCase(String genre, String title);
 }

@@ -46,7 +46,6 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**", "/api/v1/diagnostic/**", "/", "/favicon.ico").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/movies/**", "/api/v1/showtimes/**").permitAll()
                 // Require authentication for all write operations, letting @PreAuthorize handle role-specific checks
                 .requestMatchers(HttpMethod.POST, "/api/v1/movies/**", "/api/v1/showtimes/**", "/api/v1/reservations/**").authenticated()

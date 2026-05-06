@@ -12,7 +12,6 @@ import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,17 +27,17 @@ public class ShowtimeService {
     private final SeatRepository seatRepository;
     private final ReservationRepository reservationRepository;
 
-    @Transactional
     public ShowtimeDTO create(ShowtimeDTO dto) {
         Movie movie = movieRepository.findById(dto.getMovieId())
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
 
-        if (showtimeRepository.existsOverlappingShowtime(dto.getScreenId(), dto.getStartTime(), dto.getEndTime())) {
+        if (hasOverlappingShowtime(dto.getScreenId(), dto.getStartTime(), dto.getEndTime(), null)) {
             throw new IllegalArgumentException("Overlapping showtime exists for this screen.");
         }
 
         Showtime showtime = Showtime.builder()
-                .movie(movie)
+                .id(UUID.randomUUID())
+                .movieId(movie.getId())
                 .screenId(dto.getScreenId())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
@@ -54,9 +53,11 @@ public class ShowtimeService {
             char row = (char) ('A' + (i / seatsPerRow));
             int num = (i % seatsPerRow) + 1;
             seats.add(Seat.builder()
-                    .showtime(saved)
+                    .id(UUID.randomUUID())
+                    .showtimeId(saved.getId())
                     .seatNumber(String.valueOf(row) + num)
                     .status(SeatStatus.AVAILABLE)
+                    .updatedAt(java.time.LocalDateTime.now())
                     .build());
         }
         seatRepository.saveAll(seats);
@@ -64,31 +65,31 @@ public class ShowtimeService {
         return mapToDTO(saved);
     }
 
-    @Transactional(readOnly = true)
     public List<ShowtimeDTO> findAll() {
         return showtimeRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public ShowtimeDTO findById(UUID id) {
         Showtime showtime = showtimeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
         return mapToDTO(showtime);
     }
 
-    @Transactional(readOnly = true)
     public List<ShowtimeDTO> findByMovieId(UUID movieId) {
         return showtimeRepository.findByMovieId(movieId).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public ShowtimeDTO update(UUID id, ShowtimeDTO dto) {
         Showtime existing = showtimeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
+
+        if (hasOverlappingShowtime(dto.getScreenId(), dto.getStartTime(), dto.getEndTime(), id)) {
+            throw new IllegalArgumentException("Overlapping showtime exists for this screen.");
+        }
 
         existing.setScreenId(dto.getScreenId());
         existing.setStartTime(dto.getStartTime());
@@ -99,7 +100,6 @@ public class ShowtimeService {
         return mapToDTO(updated);
     }
 
-    @Transactional
     public void delete(UUID id) {
         if (!showtimeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Showtime not found");
@@ -109,11 +109,21 @@ public class ShowtimeService {
         showtimeRepository.deleteById(id);
     }
 
+    private boolean hasOverlappingShowtime(Integer screenId, java.time.LocalDateTime startTime,
+                                           java.time.LocalDateTime endTime, UUID excludedShowtimeId) {
+        return showtimeRepository.findByScreenId(screenId).stream()
+                .filter(existing -> excludedShowtimeId == null || !existing.getId().equals(excludedShowtimeId))
+                .anyMatch(existing -> existing.getStartTime().isBefore(endTime) && existing.getEndTime().isAfter(startTime));
+    }
+
     private ShowtimeDTO mapToDTO(Showtime showtime) {
+        Movie movie = movieRepository.findById(showtime.getMovieId())
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+
         return ShowtimeDTO.builder()
                 .id(showtime.getId())
-                .movieId(showtime.getMovie().getId())
-                .movieTitle(showtime.getMovie().getTitle())
+                .movieId(showtime.getMovieId())
+                .movieTitle(movie.getTitle())
                 .screenId(showtime.getScreenId())
                 .startTime(showtime.getStartTime())
                 .endTime(showtime.getEndTime())
