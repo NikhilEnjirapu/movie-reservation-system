@@ -15,10 +15,10 @@ const TicketCard = ({ reservation }) => {
         <div className="glass-panel" style={{ 
             display: 'flex', 
             overflow: 'hidden', 
-            borderRadius: '24px',
+            borderRadius: '10px',
             marginBottom: '1.5rem',
             borderLeft: `6px solid ${isUpcoming ? 'var(--success)' : 'var(--danger)'}`,
-            background: 'rgba(255,255,255,0.03)'
+            background: '#ffffff'
         }}>
             <div style={{ padding: '2rem', flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
@@ -57,8 +57,8 @@ const TicketCard = ({ reservation }) => {
             
             <div style={{ 
                 padding: '2rem', 
-                background: 'rgba(255,255,255,0.02)', 
-                borderLeft: '2px dashed rgba(255,255,255,0.1)',
+                background: 'rgba(37,99,235,0.04)', 
+                borderLeft: '2px dashed var(--border-color)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',

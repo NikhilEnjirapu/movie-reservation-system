@@ -14,7 +14,7 @@ const MovieCard = ({ movie }) => {
           {/* Overlay gradient */}
           <div style={{
               position: 'absolute', inset: 0, 
-              background: 'linear-gradient(to top, var(--bg-secondary), transparent)',
+              background: 'linear-gradient(to top, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.05))',
               zIndex: 1
           }} />
           <img 
@@ -34,10 +34,11 @@ const MovieCard = ({ movie }) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{movie.title}</h3>
             <span style={{ 
-                background: 'rgba(99, 102, 241, 0.2)', 
+                background: 'rgba(37, 99, 235, 0.1)', 
                 color: 'var(--primary-accent)', 
                 padding: '0.25rem 0.75rem', 
                 borderRadius: '999px',
+                border: '1px solid var(--border-color)',
                 fontSize: '0.75rem',
                 fontWeight: 600
             }}>
@@ -59,7 +60,7 @@ const MovieCard = ({ movie }) => {
       <style>{`
         .p-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 24px 46px rgba(0,0,0,0.38);
             border-color: var(--primary-accent);
         }
         .p-card:hover .card-img {

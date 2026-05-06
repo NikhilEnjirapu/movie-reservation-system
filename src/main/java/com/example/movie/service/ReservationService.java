@@ -33,7 +33,10 @@ public class ReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
 
         // 1. Concurrency Handling: Pessimistic Lock on requested available seats
-        List<Seat> availableSeats = seatRepository.findAvailableSeatsForUpdate(request.getSeatIds(), SeatStatus.AVAILABLE);
+        List<Seat> availableSeats = seatRepository.findAvailableSeatsForUpdate(
+                request.getShowtimeId(),
+                request.getSeatIds(),
+                SeatStatus.AVAILABLE);
 
         if (availableSeats.size() != request.getSeatIds().size()) {
             throw new SeatNotAvailableException("One or more requested seats are already booked.");

@@ -24,7 +24,7 @@ const PaymentModal = ({ total, onConfirm, onCancel }) => {
             display: 'flex', justifyContent: 'center', alignItems: 'center',
             zIndex: 1000
         }}>
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem', borderRadius: '24px', position: 'relative', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem', borderRadius: '10px', position: 'relative', border: '1px solid var(--border-color)' }}>
                 <button onClick={onCancel} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                     <X size={24} />
                 </button>
@@ -52,12 +52,12 @@ const PaymentModal = ({ total, onConfirm, onCancel }) => {
                     </div>
                 </div>
 
-                <button className="btn btn-primary" onClick={handleConfirmPayment} disabled={processing} style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none' }}>
+                <button className="btn btn-primary" onClick={handleConfirmPayment} disabled={processing} style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', background: 'linear-gradient(135deg, var(--primary-accent), var(--primary-accent-hover))', border: 'none', color: '#ffffff' }}>
                     {processing ? <Loader className="animate-spin" size={20} /> : <><CreditCard size={20} /> Authorize Payment</>}
                 </button>
                 
                 <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '1.5rem' }}>
-                    🔒 SSL Encrypted & Secure
+                    SSL Encrypted & Secure
                 </p>
             </div>
         </div>

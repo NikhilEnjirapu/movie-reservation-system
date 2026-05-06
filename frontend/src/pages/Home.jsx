@@ -54,7 +54,7 @@ const Home = () => {
   return (
     <div className="container" style={{ paddingBottom: '4rem' }}>
       <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem', background: 'linear-gradient(90deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h1 style={{ fontSize: '3rem', marginBottom: '1rem', background: 'linear-gradient(90deg, #05070b, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           Now Showing
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
@@ -70,15 +70,15 @@ const Home = () => {
                     placeholder="Search movies..." 
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.8rem', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'rgba(255,255,255,0.05)', color: 'white' }} 
+                    style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.8rem', borderRadius: '10px', border: '1px solid var(--border-color)', background: '#ffffff', color: 'var(--text-primary)' }} 
                 />
             </div>
             <div style={{ position: 'relative', width: '200px' }}>
-                <Filter size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#fff' }} />
+                <Filter size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ffffff' }} />
                 <select 
                     value={genre} 
                     onChange={(e) => setGenre(e.target.value)}
-                    style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.8rem', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--primary-accent)', color: 'white', WebkitAppearance: 'none', cursor: 'pointer' }}>
+                    style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.8rem', borderRadius: '10px', border: '1px solid transparent', background: 'var(--primary-accent)', color: '#ffffff', WebkitAppearance: 'none', cursor: 'pointer', fontWeight: 700 }}>
                     <option value="">All Genres</option>
                     <option value="Action">Action</option>
                     <option value="Sci-Fi">Sci-Fi</option>
@@ -91,10 +91,10 @@ const Home = () => {
       
       {/* AI Recommendations */}
       {user && recommendations.length > 0 && (
-          <div style={{ marginBottom: '4rem', padding: '2rem', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '24px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+          <div style={{ marginBottom: '4rem', padding: '2rem', background: 'rgba(37, 99, 235, 0.06)', borderRadius: '10px', border: '1px solid rgba(37, 99, 235, 0.18)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-                  <div style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', padding: '0.5rem', borderRadius: '8px' }}>
-                      <span style={{ color: 'white', fontWeight: 'bold' }}>AI</span>
+                  <div style={{ background: 'linear-gradient(135deg, var(--primary-accent), var(--accent-secondary))', padding: '0.5rem', borderRadius: '8px' }}>
+                      <span style={{ color: '#ffffff', fontWeight: 'bold' }}>AI</span>
                   </div>
                   <h3 style={{ fontSize: '1.5rem', margin: 0 }}>Recommended For You</h3>
               </div>

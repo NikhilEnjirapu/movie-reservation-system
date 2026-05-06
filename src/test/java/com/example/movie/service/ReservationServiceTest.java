@@ -69,7 +69,7 @@ public class ReservationServiceTest {
         request.setSeatIds(List.of(mockSeat.getId()));
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
-        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of(mockSeat));
+        when(seatRepository.findAvailableSeatsForUpdate(showtimeId, request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of(mockSeat));
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).name("Test").email("test@test.com").password("pw").role(Role.USER).build()));
 
         Reservation mockSavedReservation = Reservation.builder()
@@ -102,7 +102,7 @@ public class ReservationServiceTest {
 
         when(showtimeRepository.findById(showtimeId)).thenReturn(Optional.of(showtime));
         // Return empty list to simulate seat not being AVAILABLE or missing
-        when(seatRepository.findAvailableSeatsForUpdate(request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of());
+        when(seatRepository.findAvailableSeatsForUpdate(showtimeId, request.getSeatIds(), SeatStatus.AVAILABLE)).thenReturn(List.of());
 
         // Act & Assert
         assertThrows(SeatNotAvailableException.class, () -> reservationService.reserveSeats(userId, request));

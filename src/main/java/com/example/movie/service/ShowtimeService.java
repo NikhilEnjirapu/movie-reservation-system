@@ -7,6 +7,7 @@ import com.example.movie.domain.Showtime;
 import com.example.movie.dto.ShowtimeDTO;
 import com.example.movie.exception.ResourceNotFoundException;
 import com.example.movie.repository.MovieRepository;
+import com.example.movie.repository.ReservationRepository;
 import com.example.movie.repository.SeatRepository;
 import com.example.movie.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ShowtimeService {
     private final ShowtimeRepository showtimeRepository;
     private final MovieRepository movieRepository;
     private final SeatRepository seatRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public ShowtimeDTO create(ShowtimeDTO dto) {
@@ -102,6 +104,8 @@ public class ShowtimeService {
         if (!showtimeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Showtime not found");
         }
+        reservationRepository.findByShowtimeId(id).forEach(reservationRepository::delete);
+        seatRepository.deleteByShowtimeId(id);
         showtimeRepository.deleteById(id);
     }
 

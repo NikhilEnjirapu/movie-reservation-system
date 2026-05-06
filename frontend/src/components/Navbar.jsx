@@ -26,7 +26,7 @@ const Navbar = () => {
       }}>
         <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Ticket size={28} color="var(--primary-accent)" />
-          <h2 style={{ margin: 0, fontSize: '1.5rem', background: 'linear-gradient(90deg, #f8fafc, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 style={{ margin: 0, fontSize: '1.5rem', background: 'linear-gradient(90deg, #05070b, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             CineReserve
           </h2>
         </Link>
@@ -42,7 +42,7 @@ const Navbar = () => {
               <Link to="/my-bookings" style={{ color: 'var(--text-primary)', textDecoration: 'none', marginRight: '1rem' }}>
                   My Bookings
               </Link>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.1)', padding: '0.5rem 1rem', borderRadius: '99px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(37, 99, 235, 0.08)', border: '1px solid var(--border-color)', padding: '0.5rem 1rem', borderRadius: '99px' }}>
                   <UserIcon size={18} />
                   <span>{user.name}</span>
               </div>

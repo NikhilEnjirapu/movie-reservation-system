@@ -62,7 +62,7 @@ public class DiagnosticController {
                     // Test the problematic query
                     try {
                         var availableSeats = seatRepository.findAvailableSeatsForUpdate(
-                                List.of(firstSeat.getId()), SeatStatus.AVAILABLE);
+                                firstShowtime.getId(), List.of(firstSeat.getId()), SeatStatus.AVAILABLE);
                         result.put("available_seat_query_result", availableSeats.size());
                     } catch (Exception e) {
                         result.put("available_seat_query_error", e.getClass().getName() + ": " + e.getMessage());

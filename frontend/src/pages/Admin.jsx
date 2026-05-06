@@ -131,22 +131,22 @@ const Admin = () => {
 
     return (
         <div className="container" style={{ paddingBottom: '6rem' }}>
-            <h1 style={{ marginBottom: '1rem', background: 'linear-gradient(90deg, #10b981, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '2.5rem' }}>
+            <h1 style={{ marginBottom: '1rem', background: 'linear-gradient(90deg, #05070b, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '2.5rem' }}>
                 System Administration
             </h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '3rem' }}>Manage platform inventory and monitor global reservation health.</p>
 
             {/* Stats Dashboard */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
-                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid #10b981' }}>
+                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid var(--success)' }}>
                     <div style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart3 size={16}/> Global Revenue</div>
                     <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'white' }}>${stats.revenue.toLocaleString()}</div>
                 </div>
-                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid #6366f1' }}>
+                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid var(--primary-accent)' }}>
                     <div style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Film size={16}/> Active Titles</div>
                     <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'white' }}>{movies.length}</div>
                 </div>
-                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid #a855f7' }}>
+                <div className="glass-panel" style={{ padding: '2rem', textAlign: 'left', borderLeft: '4px solid var(--accent-secondary)' }}>
                     <div style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Calendar size={16}/> Live Showtimes</div>
                     <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'white' }}>{stats.showtimes}</div>
                 </div>
@@ -166,7 +166,7 @@ const Admin = () => {
                                     <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{m.genre}</div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEditMovie(m)} className="btn" style={{ padding: '0.5rem', background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}><Edit2 size={16}/></button>
+                                    <button onClick={() => handleEditMovie(m)} className="btn" style={{ padding: '0.5rem', background: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary-accent)' }}><Edit2 size={16}/></button>
                                     <button onClick={() => handleDeleteMovie(m.id)} className="btn" style={{ padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}><Trash2 size={16}/></button>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ const Admin = () => {
                             <textarea required value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Movie Description..." style={inputStyle} />
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{movieId ? 'Update Entry' : 'Create Entry'}</button>
-                                {movieId && <button type="button" onClick={() => { setMovieId(null); setTitle(''); setGenre(''); setDesc(''); setPoster(''); }} className="btn" style={{ background: 'rgba(255,255,255,0.1)' }}>Cancel</button>}
+                                {movieId && <button type="button" onClick={() => { setMovieId(null); setTitle(''); setGenre(''); setDesc(''); setPoster(''); }} className="btn" style={{ background: 'rgba(15, 23, 42, 0.08)' }}>Cancel</button>}
                             </div>
                         </form>
                     </div>
@@ -229,10 +229,10 @@ const Admin = () => {
 const inputStyle = {
     width: '100%',
     padding: '0.75rem 1rem',
-    borderRadius: '12px',
-    background: 'rgba(0,0,0,0.2)',
+    borderRadius: '10px',
+    background: '#ffffff',
     border: '1px solid var(--border-color)',
-    color: 'white',
+    color: 'var(--text-primary)',
     fontSize: '0.9rem'
 };
 

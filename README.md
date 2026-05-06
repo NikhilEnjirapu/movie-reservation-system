@@ -5,13 +5,13 @@
 
 The platform addresses the need for a simple, fast, and secure reservation flow. By utilizing role-based access control (RBAC), it provides distinct experiences for end-users (booking and viewing tickets) and administrators (managing movies, showtimes, and users).
 
-## 2. Live Demo Access
-You can explore the live application and test its full functionality using the demo credentials provided below:
+## 2. Demo Admin Access
+Use this demo admin account to test booking, movie CRUD, showtime management, and the admin dashboard:
 
 - **Email:** `admin@gmail.com`
 - **Password:** `12345`
 
-*Note: These credentials grant you Admin access. You can explore both the standard ticket booking flow as well as the administrative dashboard.*
+These credentials grant Admin access, so you can explore both the normal ticket booking flow and administrative CRUD operations.
 
 ## 3. Features
 - **User Authentication & Authorization**: Secure login and registration using JWT (JSON Web Tokens) with distinct User and Admin roles.
@@ -51,15 +51,14 @@ Follow these steps to run the project locally on your machine.
 ### Prerequisites
 - Java 17+
 - Node.js 18+
-- Maven (or use the provided Maven wrapper)
+- Maven
 
 ### Backend Setup
 1. Open a terminal and navigate to the project root directory.
-2. Run the Spring Boot application using the Maven wrapper:
+2. Run the Spring Boot application using Maven:
    ```bash
-   ./mvnw spring-boot:run
+   mvn spring-boot:run
    ```
-   *(On Windows, use `.\mvnw.cmd spring-boot:run`)*
 3. The backend will start on `http://localhost:8080`. It uses an H2 in-memory database by default, so no external database setup is required for local development.
 
 ### Frontend Setup

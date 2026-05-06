@@ -16,11 +16,11 @@ const SeatGrid = ({ seats, selectedSeats, onToggleSeat }) => {
       
       <div style={{ 
         width: '100%', maxWidth: '600px', height: '40px', 
-        background: 'linear-gradient(to bottom, rgba(255,255,255,0.2), transparent)',
+        background: 'linear-gradient(to bottom, rgba(37,99,235,0.18), transparent)',
         borderRadius: '50% 50% 0 0 / 100% 100% 0 0',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
         marginBottom: '4rem',
-        borderTop: '2px solid rgba(255,255,255,0.5)',
+        borderTop: '2px solid rgba(37,99,235,0.45)',
         position: 'relative'
       }}>
         <div style={{ position: 'absolute', top: '-30px', color: 'var(--text-secondary)' }}>
@@ -50,7 +50,7 @@ const SeatGrid = ({ seats, selectedSeats, onToggleSeat }) => {
                       cursor: isBooked ? 'not-allowed' : 'pointer',
                       background: isBooked ? 'var(--seat-booked)' : 
                                   isSelected ? 'var(--seat-selected)' : 'var(--seat-available)',
-                      color: isSelected ? 'white' : isBooked ? 'rgba(255,255,255,0.5)' : '#333',
+                      color: isSelected ? '#ffffff' : isBooked ? 'rgba(255,255,255,0.72)' : '#05070b',
                       fontWeight: 600,
                       transition: 'transform 0.2s, background 0.2s',
                       transform: isSelected ? 'scale(1.1)' : 'scale(1)'
@@ -68,7 +68,7 @@ const SeatGrid = ({ seats, selectedSeats, onToggleSeat }) => {
       </div>
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: '2rem', marginTop: '3rem', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px' }}>
+      <div style={{ display: 'flex', gap: '2rem', marginTop: '3rem', padding: '1rem', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '20px', height: '20px', background: 'var(--seat-available)', borderRadius: '4px' }}></div>
               <span style={{ fontSize: '0.9rem' }}>Available</span>

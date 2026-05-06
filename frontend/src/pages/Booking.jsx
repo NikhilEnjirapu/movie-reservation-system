@@ -163,7 +163,7 @@ const Booking = () => {
                                         cursor: 'pointer', 
                                         border: '1px solid var(--border-color)',
                                         transition: 'all 0.3s ease',
-                                        background: 'rgba(255,255,255,0.02)'
+                                        background: '#ffffff'
                                     }}
                                 >
                                     <div style={{ fontWeight: 600, fontSize: '1.2rem', marginBottom: '0.5rem' }}>
@@ -215,11 +215,11 @@ const Booking = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           borderBottom: 'none',
-          borderRadius: '24px 24px 0 0',
+          borderRadius: '10px 10px 0 0',
           transform: selectedSeats.length > 0 ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 100,
-          background: 'rgba(15, 23, 42, 0.9)',
+          background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(16px)'
       }}>
           <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
@@ -231,7 +231,7 @@ const Booking = () => {
                 className="btn btn-primary" 
                 onClick={handleCheckoutClick} 
                 disabled={loading} 
-                style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', boxShadow: '0 8px 20px rgba(99, 102, 241, 0.4)' }}
+                style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', boxShadow: '0 10px 24px rgba(37, 99, 235, 0.24)' }}
               >
                   {loading ? <Loader className="animate-spin" /> : <><CreditCard size={20} /> Checkout Securely</>}
               </button>
@@ -248,7 +248,7 @@ const Booking = () => {
 
       <style>{`
           .badge {
-              background: rgba(99, 102, 241, 0.2);
+              background: rgba(37, 99, 235, 0.1);
               color: var(--primary-accent);
               padding: 0.3rem 0.8rem;
               border-radius: 999px;

@@ -4,6 +4,9 @@ import com.example.movie.domain.Movie;
 import com.example.movie.dto.MovieDTO;
 import com.example.movie.exception.ResourceNotFoundException;
 import com.example.movie.repository.MovieRepository;
+import com.example.movie.repository.ReservationRepository;
+import com.example.movie.repository.SeatRepository;
+import com.example.movie.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,9 @@ import java.util.stream.Collectors;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final ShowtimeRepository showtimeRepository;
+    private final SeatRepository seatRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public MovieDTO create(MovieDTO dto) {
@@ -70,6 +76,11 @@ public class MovieService {
         if (!movieRepository.existsById(id)) {
             throw new ResourceNotFoundException("Movie not found with id: " + id);
         }
+        showtimeRepository.findByMovieId(id).forEach(showtime -> {
+            reservationRepository.findByShowtimeId(showtime.getId()).forEach(reservationRepository::delete);
+            seatRepository.deleteByShowtimeId(showtime.getId());
+            showtimeRepository.delete(showtime);
+        });
         movieRepository.deleteById(id);
     }
 
